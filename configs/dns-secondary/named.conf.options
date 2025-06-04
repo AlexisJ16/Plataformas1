@@ -1,0 +1,16 @@
+options {
+    directory "/var/cache/bind";
+    listen-on-v6 { any; };
+    listen-on { any; };
+    allow-query { any; };
+    recursion yes; // Puede ser 'no' si siempre consulta al primario
+    allow-recursion { localhost; 192.168.56.0/24; fd00:cafe:beef::/64; };
+    
+    forwarders {
+        192.168.56.10;      // Primary DNS IPv4
+        fd00:cafe:beef::10; // Primary DNS IPv6
+        // 8.8.8.8; // Opcional, si el primario falla
+    };
+    dnssec-validation auto;
+    auth-nxdomain no;    # conform to RFC1035
+};

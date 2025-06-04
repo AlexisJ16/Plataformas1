@@ -1,0 +1,17 @@
+options {
+    directory "/var/cache/bind";
+    listen-on-v6 { any; };
+    listen-on { any; }; // Escuchar en todas las IPv4
+    allow-query { any; }; // Permitir consultas de cualquiera (en LAN)
+    recursion yes;
+    allow-recursion { localhost; 192.168.56.0/24; fd00:cafe:beef::/64; };
+    
+    forwarders {
+        8.8.8.8;
+        8.8.4.4;
+        2001:4860:4860::8888; // Google IPv6 DNS
+        2001:4860:4860::8844;
+    };
+    dnssec-validation auto;
+    auth-nxdomain no;    # conform to RFC1035
+};

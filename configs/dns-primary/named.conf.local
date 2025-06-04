@@ -1,0 +1,39 @@
+// TSIG Key for secure zone transfers
+key "transfer-key" {
+    algorithm hmac-sha256;
+    secret "yourGeneratedSecretKeyHereVgqaIA8MVw6T9cgmGuEaW70IWBmAcjY3p803p9wQagU="; // REPLACE WITH THE SAME KEY AS IN SCRIPT
+};
+
+// Notify and allow transfer to secondary
+acl "trusted-slaves" {
+    192.168.56.11;      // IPv4 of dns-secondary
+    fd00:cafe:beef::11; // IPv6 of dns-secondary
+    localhost;
+};
+
+// Zona Primaria (Directa)
+zone "example.com" {
+    type master;
+    file "/etc/bind/db.example.com";
+    allow-transfer { key "transfer-key"; }; // Only allow transfer with this key
+    also-notify { 192.168.56.11; fd00:cafe:beef::11; };
+};
+
+// Zona Reversa IPv4 (192.168.56.x)
+zone "56.168.192.in-addr.arpa" {
+    type master;
+    file "/etc/bind/db.168.192.in-addr.arpa";
+    allow-transfer { key "transfer-key"; };
+    also-notify { 192.168.56.11; fd00:cafe:beef::11; };
+};
+
+// Zona Reversa IPv6 (fd00:cafe:beef::/64)
+// The nibble format for fd00:cafe:beef::/64 is f.e.e.b.e.f.a.c.0.0.d.f.ip6.arpa.
+// We'll define a sub-domain for easier management or the full /48 if you control it.
+// For /64: f.e.e.b.e.f.a.c.0.0.d.f.ip6.arpa
+zone "f.e.e.b.e.f.a.c.0.0.d.f.ip6.arpa" {
+    type master;
+    file "/etc/bind/db.X.X.X.X.ip6.arpa"; // Rename file accordingly
+    allow-transfer { key "transfer-key"; };
+    also-notify { 192.168.56.11; fd00:cafe:beef::11; };
+};

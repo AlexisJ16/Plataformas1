@@ -1,0 +1,16 @@
+$TTL    604800
+@       IN      SOA     dns-primary.example.com. admin.example.com. (
+                            2024042001      ; Serial
+                            604800          ; Refresh
+                            86400           ; Retry
+                            2419200         ; Expire
+                            604800 )        ; Negative Cache TTL
+; Name Servers
+@       IN      NS      dns-primary.example.com.
+@       IN      NS      dns-secondary.example.com.
+
+; PTR Records for 192.168.56.x
+10      IN      PTR     dns-primary.example.com.
+11      IN      PTR     dns-secondary.example.com.
+12      IN      PTR     mail.example.com.
+13      IN      PTR     dhcp.example.com.

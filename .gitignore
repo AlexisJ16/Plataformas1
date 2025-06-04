@@ -1,0 +1,41 @@
+# Vagrant specific
+.vagrant/
+*.box
+*.log
+
+# VirtualBox specific
+*.vbox
+*.vbox-prev
+*.vmdk
+*.vdi
+*.hdd
+*.ova
+*.ovf
+logs/
+nvram/
+
+# Operating System files
+.DS_Store
+Thumbs.db
+
+# IDE / Editor specific
+.idea/
+.vscode/
+*.swp
+*~
+
+# Generated files by OpenDKIM (keys should ideally be managed securely, not committed)
+# Consider if you really want to exclude them or handle secrets differently.
+# For this academic project, excluding them from git and generating them during provisioning is fine.
+# If you were to commit them, ensure the repo is private and be aware of risks.
+# configs/smtp/opendkim/keys/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Node.js
+node_modules/
+npm-debug.log
+yarn-error.log

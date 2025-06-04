@@ -1,0 +1,40 @@
+// TSIG Key - MUST MATCH THE PRIMARY's KEY
+key "transfer-key" {
+    algorithm hmac-sha256;
+    secret "yourGeneratedSecretKeyHereVgqaIA8MVw6T9cgmGuEaW70IWBmAcjY3p803p9wQagU="; // REPLACE WITH THE SAME KEY AS PRIMARY
+};
+
+// Define Primary server using the key
+server 192.168.56.10 {
+    keys { "transfer-key"; };
+};
+server fd00:cafe:beef::10 {
+    keys { "transfer-key"; };
+};
+
+// Zona Primaria (Directa) - SLAVE
+zone "example.com" {
+    type slave;
+    file "slaves/db.example.com"; // BIND creará esta carpeta y archivo
+    masters { 192.168.56.10; fd00:cafe:beef::10; }; // IPs del primario
+    allow-notify { 192.168.56.10; fd00:cafe:beef::10; };
+    masterfile-format text;
+};
+
+// Zona Reversa IPv4 - SLAVE
+zone "56.168.192.in-addr.arpa" {
+    type slave;
+    file "slaves/db.168.192.in-addr.arpa";
+    masters { 192.168.56.10; fd00:cafe:beef::10; };
+    allow-notify { 192.168.56.10; fd00:cafe:beef::10; };
+    masterfile-format text;
+};
+
+// Zona Reversa IPv6 - SLAVE
+zone "f.e.e.b.e.f.a.c.0.0.d.f.ip6.arpa" { // Ensure this matches primary
+    type slave;
+    file "slaves/db.X.X.X.X.ip6.arpa"; // Rename accordingly
+    masters { 192.168.56.10; fd00:cafe:beef::10; };
+    allow-notify { 192.168.56.10; fd00:cafe:beef::10; };
+    masterfile-format text;
+};

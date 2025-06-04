@@ -1,0 +1,54 @@
+# See /usr/share/postfix/main.cf.dist for a commented, fuller version
+smtpd_banner = $myhostname ESMTP $mail_name (Ubuntu)
+biff = no
+append_dot_mydomain = no
+readme_directory = no
+
+# Basic Settings
+myhostname = mail.example.com  # Será sobreescrito por el script
+mydomain = example.com         # Será sobreescrito por el script
+myorigin = $mydomain
+mydestination = $myhostname, localhost.$mydomain, localhost, $mydomain
+relayhost = 
+# mynetworks defined by script using postconf
+alias_maps = hash:/etc/aliases
+alias_database = hash:/etc/aliases
+# mailbox_size_limit = 0 # Ilimitado
+recipient_delimiter = +
+inet_interfaces = all
+inet_protocols = all # Escuchar en IPv4 e IPv6
+
+# Home mailbox (Dovecot handles delivery via LMTP or LDA)
+# For Maildir:
+home_mailbox = Maildir/
+# mail_spool_directory = /var/mail # Para mbox
+
+# === SASL Authentication via Dovecot ===
+smtpd_sasl_type = dovecot
+smtpd_sasl_path = private/auth # Relative to /var/spool/postfix/
+smtpd_sasl_auth_enable = yes
+smtpd_sasl_security_options = noanonymous
+smtpd_sasl_local_domain = $myhostname
+broken_sasl_auth_clients = yes
+
+# === Restrictions ===
+smtpd_recipient_restrictions =
+    permit_sasl_authenticated,
+    permit_mynetworks,
+    reject_unauth_destination
+#smtpd_sender_restrictions = permit_sasl_authenticated, permit_mynetworks, reject_unknown_sender_domain
+
+# === TLS (Self-signed cert for now, paths set by script) ===
+smtpd_use_tls=yes
+#smtpd_tls_cert_file=/etc/dovecot/ssl/dovecot.pem
+#smtpd_tls_key_file=/etc/dovecot/ssl/dovecot.key
+smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
+smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
+smtpd_tls_loglevel = 1
+smtp_tls_loglevel = 1
+
+# === DKIM Milter (set by script) ===
+# milter_protocol = 6
+# milter_default_action = accept
+# smtpd_milters = inet:localhost:8891
+# non_smtpd_milters = inet:localhost:8891

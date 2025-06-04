@@ -1,0 +1,19 @@
+$TTL    604800
+@       IN      SOA     dns-primary.example.com. admin.example.com. (
+                            2024042001      ; Serial
+                            604800          ; Refresh
+                            86400           ; Retry
+                            2419200         ; Expire
+                            604800 )        ; Negative Cache TTL
+; Name Servers
+@       IN      NS      dns-primary.example.com.
+@       IN      NS      dns-secondary.example.com.
+
+; PTR Records for fd00:cafe:beef::/64
+; For fd00:cafe:beef::10 -> 0.1.0.0.0.0.0.0.0.0.0.0.0.0.0.0
+; Full address fd00:cafe:beef:0000:0000:0000:0000:0010 reversed is
+; 0.1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.f.e.e.b.e.f.a.c.0.0.d.f.ip6.arpa.
+0.1.0.0.0.0.0.0.0.0.0.0.0.0.0.0 IN      PTR     dns-primary.example.com.
+1.1.0.0.0.0.0.0.0.0.0.0.0.0.0.0 IN      PTR     dns-secondary.example.com.
+2.1.0.0.0.0.0.0.0.0.0.0.0.0.0.0 IN      PTR     mail.example.com.
+3.1.0.0.0.0.0.0.0.0.0.0.0.0.0.0 IN      PTR     dhcp.example.com.
