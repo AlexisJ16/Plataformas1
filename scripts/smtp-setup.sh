@@ -104,10 +104,15 @@ sudo ufw allow 'Dovecot Secure POP3' # 995/tcp (if SSL enabled)
 sudo ufw allow Submission # 587/tcp for SMTP submission
 sudo ufw reload
 
-sudo systemctl restart postfix
-sudo systemctl restart dovecot
-sudo systemctl restart opendkim
-sudo systemctl enable postfix dovecot opendkim
+# ==============================================================================
+# === DKIM PROCESS STEP: Services are NOT started automatically on first run ===
+# We must first get the public key, add it to DNS, and then start them manually
+# or re-provision this machine.
+# ==============================================================================
+# sudo systemctl restart postfix
+# sudo systemctl restart dovecot
+# sudo systemctl restart opendkim
+# sudo systemctl enable postfix dovecot opendkim
 
 echo "--- SMTP Server Configured ---"
 echo "IMPORTANT: The OpenDKIM public key is in /etc/opendkim/keys/${DOMAIN}/default.txt on this VM."
