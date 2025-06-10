@@ -101,7 +101,7 @@ sudo ufw allow 'Dovecot IMAP' # 143/tcp
 sudo ufw allow 'Dovecot POP3' # 110/tcp
 sudo ufw allow 'Dovecot Secure IMAP' # 993/tcp (if SSL enabled)
 sudo ufw allow 'Dovecot Secure POP3' # 995/tcp (if SSL enabled)
-sudo ufw allow Submission # 587/tcp for SMTP submission
+sudo ufw allow 587/tcp comment 'SMTP Submission'
 sudo ufw reload
 
 # ==============================================================================
