@@ -20,7 +20,7 @@ sudo apt-get install -y bind9 bind9utils bind9-doc
 # And then include 'transfer.key' in named.conf.local
 # For simplicity here, we'll hardcode a key.
 TSIG_KEY_NAME="transfer-key"
-TSIG_KEY_SECRET="yourGeneratedSecretKeyHereVgqaIA8MVw6T9cgmGuEaW70IWBmAcjY3p803p9wQagU=" # REPLACE with a real generated key
+TSIG_KEY_SECRET="vPhK2lMEVBEwGfdeI8too1rFH1LU7M2y11MnTXGo8oU=" # REPLACE with a real generated key
 
 # === Prepare configuration files ===
 # BIND9 uses /etc/bind/

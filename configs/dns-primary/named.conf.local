@@ -1,7 +1,7 @@
 // TSIG Key for secure zone transfers
 key "transfer-key" {
     algorithm hmac-sha256;
-    secret "yourGeneratedSecretKeyHereVgqaIA8MVw6T9cgmGuEaW70IWBmAcjY3p803p9wQagU="; // REPLACE WITH THE SAME KEY AS IN SCRIPT
+    secret "vPhK2lMEVBEwGfdeI8too1rFH1LU7M2y11MnTXGo8oU="; // REPLACE WITH THE SAME KEY AS IN SCRIPT
 };
 
 // Notify and allow transfer to secondary
