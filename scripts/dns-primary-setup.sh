@@ -29,7 +29,7 @@ sudo cp /vagrant/configs/dns-primary/named.conf.options /etc/bind/
 sudo cp /vagrant/configs/dns-primary/named.conf.local /etc/bind/
 sudo cp /vagrant/configs/dns-primary/db.example.com /etc/bind/
 sudo cp /vagrant/configs/dns-primary/db.168.192.in-addr.arpa /etc/bind/
-sudo cp /vagrant/configs/dns-primary/db.X.X.X.X.ip6.arpa /etc/bind/ # Rename this to your IPv6 reverse
+sudo cp /vagrant/configs/dns-primary/db.f.e.e.b.e.f.a.c.0.0.d.f.ip6.arpa /etc/bind/ # Rename this to your IPv6 reverse
 
 # Update placeholders in zone files if necessary (e.g., serial numbers)
 # For now, assume they are correct.

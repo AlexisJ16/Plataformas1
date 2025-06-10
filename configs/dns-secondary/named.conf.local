@@ -33,7 +33,7 @@ zone "56.168.192.in-addr.arpa" {
 // Zona Reversa IPv6 - SLAVE
 zone "f.e.e.b.e.f.a.c.0.0.d.f.ip6.arpa" { // Ensure this matches primary
     type slave;
-    file "slaves/db.X.X.X.X.ip6.arpa"; // Rename accordingly
+    file "slaves/db.f.e.e.b.e.f.a.c.0.0.d.f.ip6.arpa"; // Rename accordingly
     masters { 192.168.56.10; fd00:cafe:beef::10; };
     allow-notify { 192.168.56.10; fd00:cafe:beef::10; };
     masterfile-format text;

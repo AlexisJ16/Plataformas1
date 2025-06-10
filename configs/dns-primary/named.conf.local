@@ -33,7 +33,7 @@ zone "56.168.192.in-addr.arpa" {
 // For /64: f.e.e.b.e.f.a.c.0.0.d.f.ip6.arpa
 zone "f.e.e.b.e.f.a.c.0.0.d.f.ip6.arpa" {
     type master;
-    file "/etc/bind/db.X.X.X.X.ip6.arpa"; // Rename file accordingly
+    file "/etc/bind/db.f.e.e.b.e.f.a.c.0.0.d.f.ip6.arpa"; // Rename file accordingly
     allow-transfer { key "transfer-key"; };
     also-notify { 192.168.56.11; fd00:cafe:beef::11; };
 };
