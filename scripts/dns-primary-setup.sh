@@ -51,9 +51,10 @@ sudo ufw allow 53/tcp comment 'DNS TCP'
 sudo ufw allow 53/udp comment 'DNS UDP'
 sudo ufw reload
 
-sudo systemctl restart bind9
-sudo systemctl enable bind9
-sudo systemctl status bind9
+# Usar 'named.service' directamente
+sudo systemctl restart named.service # O solo 'named'
+sudo systemctl enable named.service # O solo 'named'
+sudo systemctl status named.service # O solo 'named'
 
 echo "--- DNS Primary Configured ---"
 echo "IMPORTANT: The TSIG key named '${TSIG_KEY_NAME}' with secret '${TSIG_KEY_SECRET}' must be used on the secondary DNS."

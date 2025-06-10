@@ -24,9 +24,10 @@ sudo ufw allow 53/tcp comment 'DNS TCP'
 sudo ufw allow 53/udp comment 'DNS UDP'
 sudo ufw reload
 
-sudo systemctl restart bind9
-sudo systemctl enable bind9
-sudo systemctl status bind9
+# Usar 'named.service' directamente
+sudo systemctl restart named.service
+sudo systemctl enable named.service
+sudo systemctl status named.service
 
 echo "--- DNS Secondary Configured ---"
 echo "Check /var/log/syslog or BIND logs for successful zone transfer from primary."
