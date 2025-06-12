@@ -24,6 +24,7 @@ zone "grindavik.xyz" {
     auto-dnssec maintain;
     inline-signing yes;
     serial-update-method unixtime;      // <--- AÑADIDO AQUÍ
+    journal "/var/cache/bind/journals/db.grindavik.xyz.jnl";
 };
 
 // Zona Reversa IPv4 (192.168.56.x)
@@ -38,6 +39,7 @@ zone "56.168.192.in-addr.arpa" {
     auto-dnssec maintain;
     inline-signing yes;
     serial-update-method unixtime;      // <--- AÑADIDO AQUÍ
+    journal "/var/cache/bind/journals/db.168.192.in-addr.arpa.jnl";
 };
 
 // Zona Reversa IPv6
@@ -52,4 +54,5 @@ zone "f.e.e.b.e.f.a.c.0.0.d.f.ip6.arpa" {
     auto-dnssec maintain;
     inline-signing yes;
     serial-update-method unixtime;      // <--- AÑADIDO AQUÍ
+    journal "/var/cache/bind/journals/db.f.e.e.b.e.f.a.c.0.0.d.f.ip6.arpa.jnl";
 };

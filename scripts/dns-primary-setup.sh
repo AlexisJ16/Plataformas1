@@ -28,14 +28,17 @@ sudo mkdir -p "/var/cache/bind/keys/${PRIMARY_DOMAIN}"
 sudo mkdir -p "/var/cache/bind/keys/56.168.192.in-addr.arpa" # Para reversa IPv4
 sudo mkdir -p "/var/cache/bind/keys/f.e.e.b.e.f.a.c.0.0.d.f.ip6.arpa" # Para reversa IPv6
 sudo mkdir -p "/var/cache/bind/dynamic" # Para managed-keys (trust anchors)
+sudo mkdir -p "/var/cache/bind/journals" # <--- NUEVO DIRECTORIO PARA JOURNALS
 
 # Asignar propietario 'bind' y grupo 'bind'
 sudo chown -R bind:bind "/var/cache/bind/keys/"
 sudo chown -R bind:bind "/var/cache/bind/dynamic/"
+sudo chown -R bind:bind "/var/cache/bind/journals/" # <--- DAR PERMISOS AL NUEVO DIRECTORIO
 
 # Dar permisos adecuados (770 permite rwx para usuario y grupo, nada para otros)
 sudo chmod -R 770 "/var/cache/bind/keys/"
 sudo chmod -R 770 "/var/cache/bind/dynamic/"
+sudo chmod -R 770 "/var/cache/bind/journals/" # <--- DAR PERMISOS AL NUEVO DIRECTORIO
 
 # Dar permisos al grupo 'bind' para escribir en /etc/bind/ (para archivos .jnl)
 sudo chgrp bind /etc/bind
