@@ -1,7 +1,7 @@
 // TSIG Key for secure zone transfers
 key "transfer-key" {
     algorithm hmac-sha256;
-    secret "vPhK2lMEVBEwGfdeI8too1rFH1LU7M2y11MnTXGo8oU=";
+    secret "vPhK2lMEVBEwGfdeI8too1rFH1LU7M2y11MnTXGo8oU="; // Asegúrate que esta es tu clave correcta
 };
 
 // Notify and allow transfer to secondary
@@ -14,8 +14,8 @@ acl "trusted-slaves" {
 // Zona Primaria (Directa)
 zone "grindavik.xyz" {
     type master;
-    file "/etc/bind/db.grindavik.xyz"; // Ruta al archivo de zona
-    allow-query { any; };           // Permitir consultas de CUALQUIERA para esta zona autoritativa
+    file "/etc/bind/db.grindavik.xyz";      // Archivo fuente (lo editas manualmente)
+    allow-query { any; };                   // Permitir consultas de CUALQUIERA para esta zona autoritativa
     allow-transfer { key "transfer-key"; };
     also-notify { 192.168.56.11; fd00:cafe:beef::11; };
 
@@ -23,14 +23,13 @@ zone "grindavik.xyz" {
     key-directory "/var/cache/bind/keys/grindavik.xyz";
     auto-dnssec maintain;
     inline-signing yes;
-    // serial-update-method unixtime; // Considera esto si tienes problemas con actualizaciones de serial
+    serial-update-method unixtime;      // <--- AÑADIDO AQUÍ
 };
 
 // Zona Reversa IPv4 (192.168.56.x)
 zone "56.168.192.in-addr.arpa" {
     type master;
-    file "/etc/bind/db.168.192.in-addr.arpa";
-    // allow-query { any; }; // Generalmente no es necesario para zonas de reversa privadas
+    file "/etc/bind/db.168.192.in-addr.arpa"; // Archivo fuente
     allow-transfer { key "transfer-key"; };
     also-notify { 192.168.56.11; fd00:cafe:beef::11; };
 
@@ -38,13 +37,13 @@ zone "56.168.192.in-addr.arpa" {
     key-directory "/var/cache/bind/keys/56.168.192.in-addr.arpa";
     auto-dnssec maintain;
     inline-signing yes;
+    serial-update-method unixtime;      // <--- AÑADIDO AQUÍ
 };
 
 // Zona Reversa IPv6
 zone "f.e.e.b.e.f.a.c.0.0.d.f.ip6.arpa" {
     type master;
-    file "/etc/bind/db.f.e.e.b.e.f.a.c.0.0.d.f.ip6.arpa";
-    // allow-query { any; };
+    file "/etc/bind/db.f.e.e.b.e.f.a.c.0.0.d.f.ip6.arpa"; // Archivo fuente
     allow-transfer { key "transfer-key"; };
     also-notify { 192.168.56.11; fd00:cafe:beef::11; };
 
@@ -52,4 +51,5 @@ zone "f.e.e.b.e.f.a.c.0.0.d.f.ip6.arpa" {
     key-directory "/var/cache/bind/keys/f.e.e.b.e.f.a.c.0.0.d.f.ip6.arpa";
     auto-dnssec maintain;
     inline-signing yes;
+    serial-update-method unixtime;      // <--- AÑADIDO AQUÍ
 };
