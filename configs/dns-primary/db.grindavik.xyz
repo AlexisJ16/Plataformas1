@@ -1,0 +1,46 @@
+$TTL    3600    ; 1 hour (TTL más bajo para pruebas, puedes aumentarlo después)
+@       IN      SOA     ns1.grindavik.xyz. admin.grindavik.xyz. (
+                            2024061301      ; Serial (YYYYMMDDNN - ¡CAMBIA ESTO AL EDITAR!)
+                            7200            ; Refresh (2 hours)
+                            3600            ; Retry (1 hour)
+                            1209600         ; Expire (2 weeks)
+                            3600 )          ; Negative Cache TTL (1 hour)
+
+; Name Servers
+@       IN      NS      ns1.grindavik.xyz.
+@       IN      NS      ns2.grindavik.xyz.
+
+; Glue Records (Apuntan a IPs PRIVADAS para la simulación local)
+; Cuando se haga público, estos NS resolverán a IPs PÚBLICAS via GoDaddy
+ns1     IN      A       192.168.56.10
+ns1     IN      AAAA    fd00:cafe:beef::10
+ns2     IN      A       192.168.56.11
+ns2     IN      AAAA    fd00:cafe:beef::11
+
+; Registros para el propio dominio y servicios principales
+@       IN      A       192.168.56.10       ; Ejemplo: web del dns primario
+@       IN      AAAA    fd00:cafe:beef::10
+www     IN      A       192.168.56.10       ; Redirigir www también
+www     IN      AAAA    fd00:cafe:beef::10
+
+; Servidor de correo (apunta a tu VM 'smtp')
+mail    IN      A       192.168.56.12
+mail    IN      AAAA    fd00:cafe:beef::12
+@       IN      MX      10 mail.grindavik.xyz.
+
+; Otros hosts en tu LAN para referencia
+; (Estos no son parte del dominio autoritativo público grindavik.xyz,
+; pero pueden estar aquí si tu servidor DNS también resuelve para la LAN)
+dns-primary     IN      A       192.168.56.10 ; Redundante si ns1 es el mismo
+dns-primary     IN      AAAA    fd00:cafe:beef::10
+dns-secondary   IN      A       192.168.56.11 ; Redundante si ns2 es el mismo
+dns-secondary   IN      AAAA    fd00:cafe:beef::11
+dhcp            IN      A       192.168.56.13
+dhcp            IN      AAAA    fd00:cafe:beef::13
+
+; --- Registros de Autenticación de Correo para grindavik.xyz ---
+@       IN      TXT     "v=spf1 mx a:mail.grindavik.xyz -all"
+default._domainkey IN   TXT     "v=DKIM1; k=rsa; p=" ; SE ACTUALIZARÁ CON LA CLAVE DE OPENDKIM
+_dmarc  IN      TXT     "v=DMARC1; p=quarantine; rua=mailto:dmarc-reports@grindavik.xyz; ruf=mailto:dmarc-reports@grindavik.xyz; fo=1"
+
+; ---- FIN ----

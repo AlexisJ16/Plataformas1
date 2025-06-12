@@ -1,17 +1,36 @@
 options {
     directory "/var/cache/bind";
     listen-on-v6 { any; };
-    listen-on { any; }; // Escuchar en todas las IPv4
-    allow-query { any; }; // Permitir consultas de cualquiera (en LAN)
+    listen-on { any; };
+
+    // Recursión solo para clientes locales
     recursion yes;
     allow-recursion { localhost; 192.168.56.0/24; fd00:cafe:beef::/64; };
-    
+
+    // Consultas generales (no autoritativas) solo de clientes locales
+    // Las zonas autoritativas PUBLICAS tendrán su propio allow-query { any; };
+    allow-query { localhost; 192.168.56.0/24; fd00:cafe:beef::/64; };
+
     forwarders {
         8.8.8.8;
         8.8.4.4;
-        2001:4860:4860::8888; // Google IPv6 DNS
+        2001:4860:4860::8888;
         2001:4860:4860::8844;
     };
-    dnssec-validation auto;
+
+    // --- DNSSEC Settings ---
+    dnssec-validation auto;     // Validar respuestas
+    // dnssec-enable yes;       // Obsoleto, implicito con dnssec-validation auto
+    // key-directory "/var/cache/bind/keys"; // Opcional si se define por zona
+    managed-keys-directory "/var/cache/bind/dynamic"; // Para trust anchors
+
+    // Considera esto para depurar DNSSEC
+    // dnssec-must-be-secure grindavik.xyz no; // Para desarrollo, podría ser yes en producción
+                                             // Pero "no" ayuda si hay problemas con la cadena de confianza hacia el padre
+
     auth-nxdomain no;    # conform to RFC1035
+
+    // Origen de notificaciones/transferencias IPv6 (IP de esta máquina)
+    notify-source-v6 fd00:cafe:beef::10;
+    transfer-source-v6 fd00:cafe:beef::10;
 };

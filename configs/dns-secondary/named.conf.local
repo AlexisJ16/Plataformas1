@@ -1,7 +1,7 @@
 // TSIG Key - MUST MATCH THE PRIMARY's KEY
 key "transfer-key" {
     algorithm hmac-sha256;
-    secret "vPhK2lMEVBEwGfdeI8too1rFH1LU7M2y11MnTXGo8oU="; // REPLACE WITH THE SAME KEY AS PRIMARY
+    secret "vPhK2lMEVBEwGfdeI8too1rFH1LU7M2y11MnTXGo8oU=";
 };
 
 // Define Primary server using the key
@@ -13,12 +13,13 @@ server fd00:cafe:beef::10 {
 };
 
 // Zona Primaria (Directa) - SLAVE
-zone "example.com" {
+zone "grindavik.xyz" {
     type slave;
-    file "slaves/db.example.com"; // BIND creará esta carpeta y archivo
-    masters { 192.168.56.10; fd00:cafe:beef::10; }; // IPs del primario
+    file "slaves/db.grindavik.xyz"; // BIND creará esta carpeta y archivo
+    masters { 192.168.56.10; fd00:cafe:beef::10; };
     allow-notify { 192.168.56.10; fd00:cafe:beef::10; };
-    masterfile-format text;
+    masterfile-format text; // Opcional, BIND puede manejar binario también
+    // El esclavo validará si DNSSEC está habilitado globalmente en sus opciones
 };
 
 // Zona Reversa IPv4 - SLAVE
@@ -31,9 +32,9 @@ zone "56.168.192.in-addr.arpa" {
 };
 
 // Zona Reversa IPv6 - SLAVE
-zone "f.e.e.b.e.f.a.c.0.0.d.f.ip6.arpa" { // Ensure this matches primary
+zone "f.e.e.b.e.f.a.c.0.0.d.f.ip6.arpa" {
     type slave;
-    file "slaves/db.f.e.e.b.e.f.a.c.0.0.d.f.ip6.arpa"; // Rename accordingly
+    file "slaves/db.f.e.e.b.e.f.a.c.0.0.d.f.ip6.arpa";
     masters { 192.168.56.10; fd00:cafe:beef::10; };
     allow-notify { 192.168.56.10; fd00:cafe:beef::10; };
     masterfile-format text;
