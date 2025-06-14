@@ -1,34 +1,39 @@
 #!/bin/bash
-set -eux # Exit on error, print commands
+set -eux
 
 echo "--- Configuring DNS Primary ---"
 PRIMARY_DOMAIN="grindavik.xyz"
-# Estas IPs se usan principalmente para el resolv.conf de esta máquina
 PRIMARY_DNS_IPV4="192.168.56.10"
 PRIMARY_DNS_IPV6="fd00:cafe:beef::10"
-# La TSIG_KEY_SECRET ya no se referencia directamente aquí, se toma de named.conf.local.
-# Dejarla para el mensaje informativo final no hace daño.
-TSIG_KEY_SECRET_INFO="vPhK2lMEVBEwGfdeI8too1rFH1LU7M2y11MnTXGo8oU=" # Solo para el echo al final
+# La variable TSIG_KEY_NAME ya no es necesaria en el script si la clave está solo en named.conf.local
+TSIG_KEY_SECRET_INFO="vPhK2lMEVBEwGfdeI8too1rFH1LU7M2y11MnTXGo8oU=" # Se mantiene solo para el mensaje informativo final
 
 sudo apt-get update -y
 sudo apt-get install -y bind9 bind9utils bind9-doc acl # 'acl' es necesario para setfacl
 
 # === Directorios y Permisos para BIND en /var/cache/bind/ ===
+# BIND usará /var/cache/bind/ como su directorio principal (definido en named.conf.options)
+# Crear subdirectorios necesarios dentro de /var/cache/bind/
 echo "Creating BIND working directories in /var/cache/bind/..."
-sudo mkdir -p "/var/cache/bind/master_zones" # Donde copiaremos los archivos fuente
+sudo mkdir -p "/var/cache/bind/master_zones" # Donde copiaremos los archivos fuente para que BIND los lea
 sudo mkdir -p "/var/cache/bind/keys/${PRIMARY_DOMAIN}"
 sudo mkdir -p "/var/cache/bind/keys/56.168.192.in-addr.arpa"
 sudo mkdir -p "/var/cache/bind/keys/f.e.e.b.e.f.a.c.0.0.d.f.ip6.arpa"
 sudo mkdir -p "/var/cache/bind/dynamic"     # Para managed-keys (trust anchors)
 sudo mkdir -p "/var/cache/bind/journals"    # Para los archivos .jnl
 
-echo "Setting ownership and base permissions for /var/cache/bind/..."
+# Asegurar que 'bind' sea el propietario de todo bajo /var/cache/bind/
+# La instalación de BIND generalmente crea /var/cache/bind con propietario bind:bind.
+# Este chown reafirma la propiedad para nuestros subdirectorios.
 sudo chown -R bind:bind "/var/cache/bind/"
-# u=rwx (propietario bind tiene control total), g=rx (grupo bind puede leer/entrar), o-rwx (otros nada)
+
+# Dar permisos rwx al usuario 'bind' (propietario) y rx al grupo 'bind' para TODO /var/cache/bind/
+# 'o-rwx' quita todos los permisos para "otros"
 sudo chmod -R u=rwx,g=rx,o-rwx "/var/cache/bind/"
 echo "Permissions set for /var/cache/bind/ and subdirectories."
 
 # === Copia de Archivos de Configuración a /etc/bind/ ===
+# Archivos de config principales van a /etc/bind/ (BIND los lee de aquí para su config inicial)
 echo "Copying BIND main configuration files to /etc/bind/..."
 sudo cp "/vagrant/configs/dns-primary/named.conf.options" /etc/bind/
 # named.conf.local debe tener las directivas 'file', 'key-directory', 'journal' con rutas relativas
@@ -53,6 +58,11 @@ sudo setfacl -R -m u:bind:rwx /etc/bind/
 sudo setfacl -R -d -m u:bind:rwx /etc/bind/ # ACL por defecto para nuevos archivos/directorios
 # Nota: los archivos de config principales (named.conf, etc.) en /etc/bind/ seguirán siendo de root,
 # pero ACL permite que 'bind' cree sus propios archivos temporales 'tmp-*' allí si lo intenta.
+
+# Asegurar que los archivos de configuración en /etc/bind sean legibles por bind
+# pero solo escribibles por root, a menos que ACL lo permita para bind
+sudo chmod 640 /etc/bind/rndc.key # Propietario root, grupo bind, r-- para grupo
+sudo chgrp bind /etc/bind/rndc.key # Asegurar que el grupo es bind
 
 # Update resolv.conf
 echo "Configuring /etc/resolv.conf..."
@@ -100,10 +110,10 @@ if [ -d "${KSK_DIR}" ]; then
     sleep 30 # Aumentar la espera un poco más
     FOUND_KSK=0
     # Un intento más robusto para encontrar KSKs y no fallar si no hay archivos .key aún
-    KEY_FILES=$(sudo find "${KSK_DIR}" -maxdepth 1 -type f -name "K${PRIMARY_DOMAIN}*.key" 2>/dev/null)
+    KEY_FILES=$(sudo find "${KSK_DIR}" -maxdepth 1 -type f -name "K${PRIMARY_DOMAIN}*.key" 2>/dev/null || true) # Añadido || true para no fallar
     if [ -n "$KEY_FILES" ]; then
         for keyfile_path in $KEY_FILES; do
-            if sudo grep -q "flags: 257" "$keyfile_path"; then
+            if sudo grep -q "flags: 257" "$keyfile_path"; then # Asegúrate que el archivo exista antes de grep
                 FOUND_KSK=1
                 key_alg_num=$(basename "$keyfile_path" | cut -d+ -f2)
                 key_filename=$(basename "$keyfile_path")

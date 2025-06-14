@@ -1,6 +1,6 @@
 $TTL    3600
 @       IN      SOA     ns1.grindavik.xyz. admin.grindavik.xyz. (
-                            2024061309      ; Serial (¡CAMBIA ESTO AL EDITAR!)
+                            2024061310      ; Serial (¡CAMBIA ESTO AL EDITAR!)
                             7200            ; Refresh
                             3600            ; Retry
                             1209600         ; Expire
