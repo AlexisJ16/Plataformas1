@@ -3,7 +3,7 @@
 
 VAGRANTFILE_API_VERSION = "2"
 UBUNTU_BOX = "ubuntu/focal64"
-DESKTOP_BOX = "bento/ubuntu-20.04-desktop" # Caja con entorno gráfico para los clientes
+DESKTOP_BOX = "generic/ubuntu2004"
 PRIMARY_DOMAIN = "grindavik.xyz"
 
 # Prefijo IPv6
