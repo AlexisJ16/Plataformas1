@@ -14,45 +14,46 @@ acl "trusted-slaves" {
 // Zona Primaria (Directa)
 zone "grindavik.xyz" {
     type master;
-    file "/etc/bind/db.grindavik.xyz";      // Archivo fuente (BIND lee este)
+    // Archivo fuente, relativo a la opción 'directory' en named.conf.options (que es /var/cache/bind)
+    file "master_zones/db.grindavik.xyz";
     allow-query { any; };                   // Permitir consultas de CUALQUIERA para esta zona autoritativa
     allow-transfer { key "transfer-key"; };
     also-notify { 192.168.56.11; fd00:cafe:beef::11; };
 
     // --- DNSSEC ---
-    key-directory "/var/cache/bind/keys/grindavik.xyz";
+    key-directory "keys/grindavik.xyz";         // Relativo a /var/cache/bind/
     auto-dnssec maintain;
-    inline-signing yes;                 // CON ESTO
+    inline-signing yes;
     serial-update-method unixtime;
-    journal "/var/cache/bind/journals/db.grindavik.xyz.jnl"; // Y CON ESTO
+    journal "journals/db.grindavik.xyz.jnl"; // Relativo a /var/cache/bind/
 };
 
 // Zona Reversa IPv4 (192.168.56.x)
 zone "56.168.192.in-addr.arpa" {
     type master;
-    file "/etc/bind/db.168.192.in-addr.arpa"; // Archivo fuente
+    file "master_zones/db.168.192.in-addr.arpa"; // Relativo a /var/cache/bind/
     allow-transfer { key "transfer-key"; };
     also-notify { 192.168.56.11; fd00:cafe:beef::11; };
 
     // --- DNSSEC ---
-    key-directory "/var/cache/bind/keys/56.168.192.in-addr.arpa";
+    key-directory "keys/56.168.192.in-addr.arpa"; // Relativo a /var/cache/bind/
     auto-dnssec maintain;
-    inline-signing yes;                 // CON ESTO
+    inline-signing yes;
     serial-update-method unixtime;
-    journal "/var/cache/bind/journals/db.168.192.in-addr.arpa.jnl"; // Y CON ESTO
+    journal "journals/db.168.192.in-addr.arpa.jnl"; // Relativo a /var/cache/bind/
 };
 
 // Zona Reversa IPv6
-zone "f.e.e.b.e.f.a.c.0.0.d.f.ip6.arpa." { // CON PUNTO FINAL
+zone "f.e.e.b.e.f.a.c.0.0.d.f.ip6.arpa." { // Nombre completo de la zona con punto final
     type master;
-    file "/etc/bind/db.f.e.e.b.e.f.a.c.0.0.d.f.ip6.arpa"; // Archivo fuente
+    file "master_zones/db.f.e.e.b.e.f.a.c.0.0.d.f.ip6.arpa"; // Relativo a /var/cache/bind/
     allow-transfer { key "transfer-key"; };
     also-notify { 192.168.56.11; fd00:cafe:beef::11; };
 
     // --- DNSSEC ---
-    key-directory "/var/cache/bind/keys/f.e.e.b.e.f.a.c.0.0.d.f.ip6.arpa";
+    key-directory "keys/f.e.e.b.e.f.a.c.0.0.d.f.ip6.arpa"; // Relativo a /var/cache/bind/
     auto-dnssec maintain;
-    inline-signing yes;                 // CON ESTO
+    inline-signing yes;
     serial-update-method unixtime;
-    journal "/var/cache/bind/journals/db.f.e.e.b.e.f.a.c.0.0.d.f.ip6.arpa.jnl"; // Y CON ESTO
+    journal "journals/db.f.e.e.b.e.f.a.c.0.0.d.f.ip6.arpa.jnl"; // Relativo a /var/cache/bind/
 };
