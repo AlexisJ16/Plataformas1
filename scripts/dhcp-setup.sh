@@ -7,7 +7,7 @@ PRIMARY_DNS_IPV4="192.168.56.10"
 PRIMARY_DNS_IPV6="fd00:cafe:beef::10"
 SECONDARY_DNS_IPV4="192.168.56.11"
 SECONDARY_DNS_IPV6="fd00:cafe:beef::11"
-DOMAIN="example.com"
+DOMAIN="grindavik.xyz"
 
 # Install Kea (may require ISC repository or compile from source depending on OS version)
 # For Ubuntu 20.04+, it should be in standard repos.
