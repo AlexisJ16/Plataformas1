@@ -2,52 +2,81 @@
 smtpd_banner = $myhostname ESMTP $mail_name (Ubuntu)
 biff = no
 append_dot_mydomain = no
-readme_directory = no
+readme_directory = no # Recomendado por seguridad
 
-# Basic Settings
-myhostname = mail.example.com  # Será sobreescrito por el script
-mydomain = example.com         # Será sobreescrito por el script
-myorigin = $mydomain
+# === Basic Settings (serán sobreescritos por el script de setup) ===
+myhostname = mail.grindavik.xyz  # Placeholder, el script lo actualizará
+mydomain = grindavik.xyz         # Placeholder, el script lo actualizará
+myorigin = $mydomain             # Emails salientes aparecerán como @grindavik.xyz
+
+# Destinos para los que este servidor de correo acepta correo
 mydestination = $myhostname, localhost.$mydomain, localhost, $mydomain
-relayhost = 
-# mynetworks defined by script using postconf
+# mydestination = $myhostname, localhost.$mydomain, localhost # Si solo quieres para $mydomain
+# y $myhostname, esto es más seguro. Si grindavik.xyz también debe ser destino:
+# mydestination = $myhostname, localhost.$mydomain, localhost, $mydomain
+
+# mynetworks: Lo configura el script para permitir retransmisión desde red local y localhost
+# mynetworks_style = host # Alternativa si mynetworks es muy permisivo
+
+relayhost =
+
 alias_maps = hash:/etc/aliases
 alias_database = hash:/etc/aliases
-# mailbox_size_limit = 0 # Ilimitado
-recipient_delimiter = +
-inet_interfaces = all
-inet_protocols = all # Escuchar en IPv4 e IPv6
 
-# Home mailbox (Dovecot handles delivery via LMTP or LDA)
-# For Maildir:
+# Entrega a Maildir. Dovecot lo manejará.
 home_mailbox = Maildir/
-# mail_spool_directory = /var/mail # Para mbox
+# mail_spool_directory = /var/mail # Descomentar para mbox, pero usaremos Maildir
 
-# === SASL Authentication via Dovecot ===
+mailbox_size_limit = 0
+recipient_delimiter = +
+
+# Escuchar en todas las interfaces, IPv4 e IPv6
+inet_interfaces = all
+inet_protocols = all
+
+# === SASL Authentication via Dovecot (para que clientes se autentiquen para enviar) ===
 smtpd_sasl_type = dovecot
-smtpd_sasl_path = private/auth # Relative to /var/spool/postfix/
+# Ruta al socket de autenticación de Dovecot, relativo a /var/spool/postfix/
+smtpd_sasl_path = private/auth
 smtpd_sasl_auth_enable = yes
-smtpd_sasl_security_options = noanonymous
-smtpd_sasl_local_domain = $myhostname
-broken_sasl_auth_clients = yes
+smtpd_sasl_security_options = noanonymous # No permitir login anónimo
+smtpd_sasl_local_domain = $myhostname    # Dominio para logins SASL sin @domain
+# broken_sasl_auth_clients = yes # Necesario para clientes Outlook más antiguos
 
-# === Restrictions ===
-smtpd_recipient_restrictions =
-    permit_sasl_authenticated,
-    permit_mynetworks,
-    reject_unauth_destination
-#smtpd_sender_restrictions = permit_sasl_authenticated, permit_mynetworks, reject_unknown_sender_domain
-
-# === TLS (Self-signed cert for now, paths set by script) ===
-smtpd_use_tls=yes
-#smtpd_tls_cert_file=/etc/dovecot/ssl/dovecot.pem
-#smtpd_tls_key_file=/etc/dovecot/ssl/dovecot.key
+# === TLS Settings (para STARTTLS) ===
+# smtpd_use_tls = yes # Habilitado por defecto
+smtpd_tls_security_level = may    # Ofrecer STARTTLS, pero no requerirlo (bueno para pruebas)
+                                  # Para producción, considerar 'encrypt'
+# Las rutas a cert y key son configuradas por el script de setup:
+# smtpd_tls_cert_file=/etc/dovecot/ssl/dovecot.pem
+# smtpd_tls_key_file=/etc/dovecot/ssl/dovecot.key
 smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
 smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
-smtpd_tls_loglevel = 1
+smtpd_tls_loglevel = 1            # Registrar actividad TLS
 smtp_tls_loglevel = 1
 
-# === DKIM Milter (set by script) ===
+# Seguridad para correo saliente
+smtp_tls_security_level = may     # Usar STARTTLS si el servidor remoto lo ofrece
+# smtp_tls_CAfile es configurado por el script para usar CAs del sistema
+
+# === Restrictions for incoming mail (SMTPD) ===
+# Orden es importante. Lo más permisivo primero si es seguido por reject.
+smtpd_recipient_restrictions =
+    permit_mynetworks,            # Permitir de mis redes (localhost, 192.168.56.0/24)
+    permit_sasl_authenticated,    # Permitir si el cliente está autenticado
+    reject_unauth_destination,    # Rechazar si no somos el destino (previene open relay)
+    # reject_invalid_helo_hostname,
+    # reject_non_fqdn_helo_hostname,
+    # reject_unknown_sender_domain,
+    # reject_unknown_recipient_domain
+    permit # Permitir el resto (cuidado, esto podría ser muy permisivo si las reglas anteriores no bloquean spam)
+            # Se podrían añadir listas RBL aquí para anti-spam
+
+# Para el puerto de submission (587), podríamos tener reglas más estrictas:
+# submission_recipient_restrictions = permit_sasl_authenticated, reject
+
+# === OpenDKIM Milter Integration ===
+# Las siguientes líneas son configuradas por el script de setup con `postconf`:
 # milter_protocol = 6
 # milter_default_action = accept
 # smtpd_milters = inet:localhost:8891

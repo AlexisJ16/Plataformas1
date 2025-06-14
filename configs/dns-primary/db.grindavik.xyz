@@ -1,6 +1,6 @@
 $TTL    3600    ; 1 hour (TTL más bajo para pruebas, puedes aumentarlo después)
 @       IN      SOA     ns1.grindavik.xyz. admin.grindavik.xyz. (
-                            2024061310      ; Serial (YYYYMMDDNN - ¡CAMBIA ESTO AL EDITAR!)
+                            2024061311      ; Serial (YYYYMMDDNN - ¡CAMBIA ESTO AL EDITAR!)
                             7200            ; Refresh (2 hours)
                             3600            ; Retry (1 hour)
                             1209600         ; Expire (2 weeks)
@@ -40,7 +40,9 @@ dhcp            IN      AAAA    fd00:cafe:beef::13
 
 ; --- Registros de Autenticación de Correo para grindavik.xyz ---
 @       IN      TXT     "v=spf1 mx a:mail.grindavik.xyz -all"
-default._domainkey IN   TXT     "v=DKIM1; k=rsa; p=" ; SE ACTUALIZARÁ CON LA CLAVE DE OPENDKIM
+default._domainkey      IN      TXT     ( "v=DKIM1; h=sha256; k=rsa; "
+          "p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAt96DxGJzZaUYV2qKBPMpNDpuF0dl4ORFk0Pi5HF5ODLM/BGBrwIMF95Ce4ZiW1d45NrHsPPI6fvpCCPXf9KGURHyrPYLgEA2DqXT9ZPeIHvshB9xb9b4ANW4q8mRy83ZKrrWdUevRdO7/O+k75YfdtphKJa/w5wQxuO1KkFcOEOtMBUT5ZnpeyUnA491mCE4UCsIzMYtIPXlM3"
+          "2ychinQD2VhsT28OxxssFE46e/ET1SyvvYkh/HDZec08kRvxrD5bVGNncFe06zEgq04+OYCth3b4V2ff49OIpdb7168aH6uGRHY8uc1oL90az06Q9dMv+1D9DT7Gvg626k0pyzEwIDAQAB" )
 _dmarc  IN      TXT     "v=DMARC1; p=quarantine; rua=mailto:dmarc-reports@grindavik.xyz; ruf=mailto:dmarc-reports@grindavik.xyz; fo=1"
 
 ; ---- FIN ----
