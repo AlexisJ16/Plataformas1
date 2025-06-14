@@ -14,7 +14,7 @@ acl "trusted-slaves" {
 // Zona Primaria (Directa)
 zone "grindavik.xyz" {
     type master;
-    file "/etc/bind/db.grindavik.xyz";      // Archivo fuente (leído por BIND)
+    file "/etc/bind/db.grindavik.xyz";      // Archivo fuente (BIND lee este)
     allow-query { any; };                   // Permitir consultas de CUALQUIERA para esta zona autoritativa
     allow-transfer { key "transfer-key"; };
     also-notify { 192.168.56.11; fd00:cafe:beef::11; };
@@ -22,9 +22,9 @@ zone "grindavik.xyz" {
     // --- DNSSEC ---
     key-directory "/var/cache/bind/keys/grindavik.xyz";
     auto-dnssec maintain;
-    inline-signing yes;                 // <--- RESTAURADO
+    inline-signing yes;                 // CON ESTO
     serial-update-method unixtime;
-    journal "/var/cache/bind/journals/db.grindavik.xyz.jnl"; // <--- RESTAURADO
+    journal "/var/cache/bind/journals/db.grindavik.xyz.jnl"; // Y CON ESTO
 };
 
 // Zona Reversa IPv4 (192.168.56.x)
@@ -37,13 +37,13 @@ zone "56.168.192.in-addr.arpa" {
     // --- DNSSEC ---
     key-directory "/var/cache/bind/keys/56.168.192.in-addr.arpa";
     auto-dnssec maintain;
-    inline-signing yes;                 // <--- RESTAURADO
+    inline-signing yes;                 // CON ESTO
     serial-update-method unixtime;
-    journal "/var/cache/bind/journals/db.168.192.in-addr.arpa.jnl"; // <--- RESTAURADO
+    journal "/var/cache/bind/journals/db.168.192.in-addr.arpa.jnl"; // Y CON ESTO
 };
 
 // Zona Reversa IPv6
-zone "f.e.e.b.e.f.a.c.0.0.d.f.ip6.arpa." { // <--- AÑADIDO PUNTO FINAL AQUÍ
+zone "f.e.e.b.e.f.a.c.0.0.d.f.ip6.arpa." { // CON PUNTO FINAL
     type master;
     file "/etc/bind/db.f.e.e.b.e.f.a.c.0.0.d.f.ip6.arpa"; // Archivo fuente
     allow-transfer { key "transfer-key"; };
@@ -52,7 +52,7 @@ zone "f.e.e.b.e.f.a.c.0.0.d.f.ip6.arpa." { // <--- AÑADIDO PUNTO FINAL AQUÍ
     // --- DNSSEC ---
     key-directory "/var/cache/bind/keys/f.e.e.b.e.f.a.c.0.0.d.f.ip6.arpa";
     auto-dnssec maintain;
-    inline-signing yes;                 // <--- RESTAURADO
+    inline-signing yes;                 // CON ESTO
     serial-update-method unixtime;
-    journal "/var/cache/bind/journals/db.f.e.e.b.e.f.a.c.0.0.d.f.ip6.arpa.jnl"; // <--- RESTAURADO
+    journal "/var/cache/bind/journals/db.f.e.e.b.e.f.a.c.0.0.d.f.ip6.arpa.jnl"; // Y CON ESTO
 };
