@@ -2,8 +2,7 @@
 # vi: set ft=ruby :
 
 VAGRANTFILE_API_VERSION = "2"
-UBUNTU_BOX = "ubuntu/focal64"
-DESKTOP_BOX = "generic/ubuntu2004"
+UBUNTU_BOX = "ubuntu/focal64" # Usaremos esta única imagen para todos los nodos
 PRIMARY_DOMAIN = "grindavik.xyz"
 
 # Prefijo IPv6
@@ -18,18 +17,19 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # --- Configuración general del proveedor VirtualBox ---
   config.vm.provider "virtualbox" do |vb|
-    vb.memory = "1024"
-    vb.cpus = "1"
+    vb.memory = "1024" # Memoria base para todas las VMs
+    vb.cpus = "1"      # CPU base para todas las VMs
   end
 
   # --- Opciones de montaje para carpetas compartidas ---
+  # Se cambió fmode a 755 para dar permisos de ejecución a los scripts .sh
   config.vm.synced_folder ".", "/vagrant",
     owner: "vagrant",
     group: "vagrant",
-    mount_options: ["dmode=755", "fmode=644"] # fmode 644 es más seguro para archivos
+    mount_options: ["dmode=755", "fmode=755"]
 
   # =======================================================
-  #                  DEFINICIÓN DE SERVIDORES
+  #                     DEFINICIÓN DE SERVIDORES
   # =======================================================
 
   # 1. Servidor DNS Primario
@@ -81,39 +81,26 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   # =========================================================
-  #                  DEFINICIÓN DE CLIENTES
+  #                     DEFINICIÓN DE CLIENTES
   # =========================================================
 
-  # 5. Cliente 1
+  # 5. Cliente 1 (Ligero, sin GUI)
   config.vm.define "client1" do |client|
-    client.vm.box = DESKTOP_BOX # Usa la caja con entorno de escritorio
+    client.vm.box = UBUNTU_BOX # Usa la imagen de servidor, mucho más ligera
     client.vm.hostname = "client1.#{PRIMARY_DOMAIN}"
     
     # Configura la red para usar DHCP y obtener una IP de nuestro servidor Kea
     client.vm.network "private_network", type: "dhcp"
-
-    # Habilita la GUI y asigna más recursos para el entorno de escritorio
-    client.vm.provider "virtualbox" do |vb|
-      vb.gui = true
-      vb.memory = "2048"
-      vb.cpus = "2"
-    end
     
     # Aprovisiona con el script para clientes (instala Thunderbird, etc.)
     client.vm.provision "shell", path: "scripts/client-setup.sh"
   end
 
-  # 6. Cliente 2
+  # 6. Cliente 2 (Ligero, sin GUI)
   config.vm.define "client2" do |client|
-    client.vm.box = DESKTOP_BOX
+    client.vm.box = UBUNTU_BOX # Usa la imagen de servidor
     client.vm.hostname = "client2.#{PRIMARY_DOMAIN}"
     client.vm.network "private_network", type: "dhcp"
-
-    client.vm.provider "virtualbox" do |vb|
-      vb.gui = true
-      vb.memory = "2048"
-      vb.cpus = "2"
-    end
 
     client.vm.provision "shell", path: "scripts/client-setup.sh"
   end
